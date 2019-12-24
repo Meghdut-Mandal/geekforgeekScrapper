@@ -8,7 +8,7 @@ import retrofit2.http.Query
 import java.util.*
 
 
-class QuizRepository {
+class GeekForGeekRepository {
 
     private val httpClient: OkHttpClient by lazy {
         val client = OkHttpClient.Builder()
@@ -24,7 +24,7 @@ class QuizRepository {
     fun getCategories(): ArrayList<QuizCategory>? =
         retrofit.create(QuizListInterface::class.java).get("fetch_quiz_list").execute().body()
 
-    fun getQuiz(quizId: Int): List<QuizModel>? =
+    fun getQuiz(quizId: Int): List<Quiz>? =
         retrofit.create(QuizInterface::class.java).get("fetch_quiz", quizId).execute().body()
 
     fun closeAllConnections() = httpClient.connectionPool().evictAll()
@@ -37,5 +37,5 @@ private interface QuizListInterface {
 
 private interface QuizInterface {
     @GET("/android_app.php")
-    fun get(@Query("method") str: String, @Query("quiz_id") i: Int): Call<List<QuizModel>>
+    fun get(@Query("method") str: String, @Query("quiz_id") i: Int): Call<List<Quiz>>
 }

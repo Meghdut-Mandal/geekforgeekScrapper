@@ -1,15 +1,15 @@
-import org.dizitart.kno2.nitrite
 import org.dizitart.no2.exceptions.UniqueConstraintException
-import java.io.File
 
-val db = nitrite {
-    file = File("data.db")
+
+val quizRepository = GeekForGeekRepository()
+val dataBase = DataBase()
+
+fun readAllQuizes() {
+
 }
-val quizRepository=QuizRepository()
-
 
 fun readAllCatagories() {
-    val repo = db.getRepository(QuizCategory::class.java)
+    val repo = dataBase.quizCategoryRepository
     val body = quizRepository.getCategories()
     body?.forEach {
         try {
