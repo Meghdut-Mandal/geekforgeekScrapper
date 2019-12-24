@@ -36,10 +36,10 @@ fun readAllCatagories() {
     val body = response.body()
     body?.forEach {
         try {
-//            println(>>readAllCataGories   ")
             repo.insert(it)
             println(">>readAllCataGories  Added category $it ")
         } catch (e: UniqueConstraintException) {
+            println(">>readAllCatagories  Catagory Alredy Exists in the dataBase !! ${it?.quizCategoryName} ")
         }
     }
 }
