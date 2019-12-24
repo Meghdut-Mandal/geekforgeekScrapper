@@ -1,6 +1,7 @@
 import com.google.gson.annotations.SerializedName
 import org.dizitart.no2.objects.Id
 import java.util.*
+
 /*
 
  */
@@ -16,8 +17,12 @@ data class QuizCategory(
     @Id
     @SerializedName("term_id") val quizTermId: String,
     @SerializedName("name") val quizCategoryName: String,
-    val quizzes: ArrayList<QuizList>
+    val quizzes: ArrayList<QuizList>,
+    var explored: Boolean = false
 )
+
+fun QuizCategory.forEachList(func: (QuizList) -> Unit) = quizzes.parallelStream().forEach(func)
+
 
 data class Quiz(
     @Id

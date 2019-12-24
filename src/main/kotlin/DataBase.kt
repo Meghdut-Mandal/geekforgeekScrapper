@@ -1,5 +1,7 @@
+import org.dizitart.kno2.filters.eq
 import org.dizitart.kno2.nitrite
 import java.io.File
+import javax.transaction.xa.XAException
 
 @Suppress("unused")
 class DataBase {
@@ -8,8 +10,13 @@ class DataBase {
     }
     val quizCategoryRepository get() = db.getRepository(QuizCategory::class.java)!!
 
-    fun forEachQuizList(func: (QuizList) -> Unit) = quizCategoryRepository.find().flatMap { it.quizzes }.forEach {
-        func(it)
+    fun forEachQuizCategory(func: (QuizCategory) -> Unit) = quizCategoryRepository.find().forEach(func)
+
+    fun getQuizRepository(quizID: Int) = db.getRepository(quizID.toString(), Quiz::class.java)
+
+    fun markExplored(quizCategory: QuizCategory) {
+
+        quizCategoryRepository.update(quizCategory.copy(explored = true))
+        println(">DataBase>markExplored  ${quizCategory.quizCategoryName} done ")
     }
-    val quizRepository get() = db.getRepository(Quiz::class.java)!!
 }
