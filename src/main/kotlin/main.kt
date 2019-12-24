@@ -1,9 +1,8 @@
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import org.dizitart.kno2.nitrite
+import org.dizitart.no2.exceptions.UniqueConstraintException
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -15,9 +14,10 @@ val db = nitrite {
     file = File("data.db")
 }
 
-private fun getNewHttpClient(): OkHttpClient? {
+
+private val httpClient: OkHttpClient by lazy {
     val client = OkHttpClient.Builder()
-    return client.build()
+    client.build()
 }
 
 
@@ -26,18 +26,28 @@ private interface QuizListInterface {
     fun get(@Query("method") str: String?): Call<ArrayList<QuizCategory?>?>?
 }
 
-var retrofit = Retrofit.Builder().client(getNewHttpClient()).addConverterFactory(
+var retrofit: Retrofit = Retrofit.Builder().client(httpClient).addConverterFactory(
     GsonConverterFactory.create(GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create())
 ).baseUrl("https://www.geeksforgeeks.org/").build()
 
-fun main() {
-    val body = retrofit.create(QuizListInterface::class.java).get("fetch_quiz_list")!!.execute().body()
-
+fun readAllCatagories() {
+    val repo = db.getRepository(QuizCategory::class.java)
+    val response = retrofit.create(QuizListInterface::class.java).get("fetch_quiz_list")!!.execute()
+    val body = response.body()
     body?.forEach {
-        println(">>main  $it ")
+        try {
+//            println(>>readAllCataGories   ")
+            repo.insert(it)
+            println(">>readAllCataGories  Added category $it ")
+        } catch (e: UniqueConstraintException) {
+        }
     }
+}
 
 
+fun main() {
+    readAllCatagories()
+    httpClient.connectionPool().evictAll()
 }
 
 fun timed(func: () -> Unit): Long {
