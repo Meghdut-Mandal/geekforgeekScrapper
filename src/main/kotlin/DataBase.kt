@@ -13,6 +13,7 @@ class DataBase {
     fun forEachQuizCategory(func: (QuizCategory) -> Unit) = quizCategoryRepository.find().forEach(func)
 
     fun getQuizRepository(quizID: Int) = db.getRepository(quizID.toString(), Quiz::class.java)
+    fun forEachQuiz(func:(Quiz)->Unit)=quizCategoryRepository.find().flatMap { it.quizzes }.flatMap { getQuizRepository(it.quizId).find() }.forEach(func)
 
     fun markExplored(quizCategory: QuizCategory) {
 
